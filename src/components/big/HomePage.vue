@@ -76,8 +76,8 @@
             },
 
             logout: function () {
-                localStorage.removeItem("authorization");
-                localStorage.removeItem("username");
+                buffer.remove("auth");
+                buffer.remove("username");
 
                 this.live = false;
                 this.username = "";

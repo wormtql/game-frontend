@@ -11,11 +11,12 @@
                     <v-text-field label="密码"
                                   prepend-icon="mdi-lock"
                                   v-model="loginPassword"
+                                  type="password"
                     ></v-text-field>
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="primary" text @click="login">登录</v-btn>
+                    <v-btn color="primary" text @click="login" :loading="loginLoading">登录</v-btn>
                     <v-btn color="primary" text @click="sw">去注册</v-btn>
                 </v-card-actions>
             </v-card>
@@ -30,15 +31,17 @@
                     <v-text-field label="密码"
                                   prepend-icon="mdi-lock"
                                   v-model="signUpPassword"
+                                  type="password"
                     ></v-text-field>
                     <v-text-field label="确认密码"
                                   prepend-icon="mdi-lock"
                                   v-model="signUpConfirmPassword"
+                                  type="password"
                     ></v-text-field>
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="primary" text @click="signUp">注册</v-btn>
+                    <v-btn color="primary" text @click="signUp" :loading="signUpLoading">注册</v-btn>
                     <v-btn color="primary" text @click="sw">去登录</v-btn>
                 </v-card-actions>
             </v-card>
@@ -62,7 +65,10 @@
 
                 signUpUsername: "",
                 signUpPassword: "",
-                signUpConfirmPassword: ""
+                signUpConfirmPassword: "",
+
+                loginLoading: false,
+                signUpLoading: false,
             }
         },
         methods: {
@@ -80,6 +86,8 @@
                     password: this.loginPassword
                 };
 
+                this.loginLoading = true;
+
                 axios.post(`${consts.url}api/user/login`, data).then(res => {
                     // window.console.log(res);
                     if (res.status === 200 && res.data.status === 200) {
@@ -92,6 +100,8 @@
 
                         this.$router.replace(this.$route.params.redirect || "/");
                     }
+
+                    this.loginLoading = false;
                 })
             },
 
@@ -102,8 +112,12 @@
                     confirmPassword: this.signUpConfirmPassword
                 };
 
+                this.signUpLoading = true;
+
                 axios.post(`${consts.url}api/user/sign-up`, data).then(res => {
                     window.console.log(res);
+
+                    this.signUpLoading = false;
                 })
             }
         }

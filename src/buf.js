@@ -14,6 +14,10 @@ class Buffer {
     containsKey(k) {
         return this.buf[k] !== undefined
     }
+
+    remove(k) {
+        this.buf[k] = undefined;
+    }
 }
 
 export default new Buffer();

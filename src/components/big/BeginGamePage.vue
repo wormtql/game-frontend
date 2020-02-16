@@ -89,8 +89,8 @@
 
                         let data = JSON.parse(e.data);
 
-                        if (data.command === "room_token") {
-                            buffer.set("roomToken", data.token);
+                        if (data.command === "room_id") {
+                            buffer.set("roomId", data.id);
                             buffer.set("sock", sock);
                             vm.$router.replace("/play/hex");
                         } else if (data.command === "error") {
@@ -119,8 +119,8 @@
 
                         let data = JSON.parse(e.data);
 
-                        if (data.command === "room_token") {
-                            buffer.set("roomToken", data.token);
+                        if (data.command === "room_id") {
+                            buffer.set("roomId", data.id);
                             buffer.set("sock", sock);
                             vm.$router.replace("/play/hex");
                         } else if (data.command === "error") {
@@ -130,7 +130,7 @@
                         }
                     };
                     sock.onclose = function () {
-                        window.console.log("close");
+                        window.console.log("socket close");
                     };
                 }
 

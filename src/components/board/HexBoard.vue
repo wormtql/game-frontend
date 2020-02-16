@@ -8,7 +8,7 @@
                          stroke="red"
                          class="grid"
                          :fill="gridColor(i - 1, j - 1)"
-                         @mouseenter="$set(hover[i - 1], j - 1, true)"
+                         @mouseenter="onMouseEnter(i - 1, j - 1)"
                          @mouseleave="$set(hover[i - 1], j - 1, false)"
                          @click="play(i - 1, j - 1)"
                 >
@@ -61,7 +61,9 @@
                         })
                     });
                 }
-            }
+            },
+            enabled: { type: Boolean, default: true },
+            single: { type: Number }
         },
         data: function () {
             return {
@@ -81,6 +83,18 @@
             }
         },
         methods: {
+            clear: function () {
+                for (let i = 0; i < this.size; i++) {
+                    for (let j = 0; j < this.size; j++) {
+                        this.state[i][j] = 0;
+                    }
+                }
+            },
+            onMouseEnter: function (i, j) {
+                if (this.enabled) {
+                    this.$set(this.hover[i], j, true);
+                }
+            },
             origin: function (i, j) {
                 // i -= 1;
                 // j -= 1;
@@ -112,17 +126,30 @@
                     return this.blueColor;
                 } else {
                     if (this.hover[i][j]) {
-                        return this.toPlay === 1 ? this.redColor : this.blueColor
+                        if (this.single) {
+                            return this.single === 1 ? this.redColor : this.blueColor;
+                        } else {
+                            return this.toPlay === 1 ? this.redColor : this.blueColor;
+                        }
                     } else {
                         return "white";
                     }
                 }
             },
             play: function (i, j) {
-                if (this.state[i][j] === 0) {
-                    this.$set(this.state[i], j, this.toPlay);
-                    this.toPlay = 3 - this.toPlay;
+                if (this.state[i][j] === 0 && this.enabled) {
+                    if (this.single) {
+                        this.$set(this.state[i], j, this.single);
+                        this.$emit("play", i, j, this.single);
+                    } else {
+                        this.$set(this.state[i], j, this.toPlay);
+                        this.$emit("play", i, j, this.toPlay);
+                        this.toPlay = 3 - this.toPlay;
+                    }
                 }
+            },
+            setGrid: function (i, j, c) {
+                this.$set(this.state[i], j, c);
             }
         },
         computed: {
