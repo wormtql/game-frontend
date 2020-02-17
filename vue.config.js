@@ -3,6 +3,6 @@ module.exports = {
     "vuetify"
   ],
   devServer: {
-    port: 8081
+    port: process.env.NODE_ENV === "development" ? 8081 : 80
   }
 };

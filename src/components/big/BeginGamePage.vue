@@ -35,7 +35,7 @@
     // import SockJS from "sockjs-client"
     // import Stomp from "stompjs"
     // import axios from "axios"
-    // import consts from "@/consts";
+    import consts from "@/consts";
     import buffer from "@/buf";
 
     export default {
@@ -75,7 +75,7 @@
                 if (this.select === 0) {
                     // join room
                     let vm = this;
-                    let sock = new WebSocket("ws://localhost:8080/websocket");
+                    let sock = new WebSocket(`${consts.wsUrl}websocket`);
                     sock.onopen = function () {
                         sock.send(JSON.stringify({
                             command: "join",
@@ -104,7 +104,7 @@
                     }
                 } else if (this.select === 1) {
                     // create room
-                    let sock = new WebSocket("ws://localhost:8080/websocket");
+                    let sock = new WebSocket(`${consts.wsUrl}websocket`);
                     let vm = this;
                     sock.onopen = function () {
                         sock.send(JSON.stringify({

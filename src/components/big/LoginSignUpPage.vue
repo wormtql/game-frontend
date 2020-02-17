@@ -1,5 +1,6 @@
 <template>
     <v-content style="padding: 64px 0" >
+        <v-snackbar v-model="showSnackbar">{{ snackbarText }}</v-snackbar>
         <v-row justify="center">
             <v-card width="400px" v-show="which === 'login'">
                 <v-card-title>登录</v-card-title>
@@ -38,6 +39,7 @@
                                   v-model="signUpConfirmPassword"
                                   type="password"
                     ></v-text-field>
+                    <v-checkbox label="直接登录" v-model="signUpLogin"></v-checkbox>
                 </v-card-text>
                 <v-card-actions>
                     <v-spacer></v-spacer>
@@ -66,9 +68,13 @@
                 signUpUsername: "",
                 signUpPassword: "",
                 signUpConfirmPassword: "",
+                signUpLogin: false,
 
                 loginLoading: false,
                 signUpLoading: false,
+
+                showSnackbar: false,
+                snackbarText: "",
             }
         },
         methods: {
@@ -78,6 +84,11 @@
                 } else {
                     this.which = "login";
                 }
+            },
+
+            displaySnackbar: function (text) {
+                this.snackbarText = text;
+                this.showSnackbar = true;
             },
 
             login: function () {
@@ -99,6 +110,8 @@
                         buffer.set("username", this.loginUsername);
 
                         this.$router.replace(this.$route.params.redirect || "/");
+                    } else {
+                        this.displaySnackbar(res.data.message || "错误");
                     }
 
                     this.loginLoading = false;
@@ -114,8 +127,22 @@
 
                 this.signUpLoading = true;
 
-                axios.post(`${consts.url}api/user/sign-up`, data).then(res => {
-                    window.console.log(res);
+                axios.post(`${consts.url}api/user/sign-up?login=${this.signUpLogin}`, data).then(res => {
+                    if (res.status === 200 && res.data.status === 200) {
+                        // 注册成功
+                        if (this.signUpLogin) {
+                            let auth = res.headers.authorization;
+                            buffer.set("auth", auth);
+                            buffer.set("username", this.signUpUsername);
+
+                            this.$router.replace(this.$route.params.redirect || "/");
+                        } else {
+                            this.displaySnackbar("注册成功");
+                            this.sw();
+                        }
+                    } else {
+                        this.displaySnackbar(res.data.message || "错误");
+                    }
 
                     this.signUpLoading = false;
                 })
